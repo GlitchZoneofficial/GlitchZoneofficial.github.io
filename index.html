@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GlitchZone Community</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Inter:wght@400;500;600&display=swap">
+<style>
+:root{--bg:#101114;--sf:#17181d;--sf2:#1e2027;--bd:#272a33;--tx:#e6e7ec;--mu:#8d92a3;--ac:#8b6cf0;--ac2:#a48df5;--mint:#6fe3cb;--pink:#b45ac8;--er:#ef6b6b;--ok:#4ecb9a;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}html{scroll-padding-top:64px}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow-x:hidden}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--ac2)}svg{flex:none;display:block}
+.wrap{max-width:1080px;margin:auto;padding:0 16px}
+header{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--bd)}
+.bar{display:flex;align-items:center;gap:6px;height:54px;position:relative}
+.logo{font:700 21px Cinzel,"Trajan Pro",Georgia,serif;color:var(--mint);text-shadow:1.5px 1px 0 var(--pink);cursor:pointer;white-space:nowrap;margin-right:10px}
+nav{display:flex;gap:2px;align-items:center}
+nav button{background:none;border:0;padding:7px 11px;border-radius:6px;cursor:pointer;color:var(--mu);font-weight:500}
+nav button:hover,nav button.on{color:var(--tx)}nav button.on{background:var(--sf2)}
+.sp{flex:1}
+.ib{background:none;border:1px solid transparent;border-radius:8px;width:38px;height:38px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:var(--mu);position:relative;flex:none}
+.ib:hover{color:var(--tx);background:var(--sf2)}
+.bdg{position:absolute;top:3px;right:3px;background:var(--ac);color:#fff;border-radius:99px;font-size:10px;min-width:16px;height:16px;line-height:16px;text-align:center}
+.mb,#nv .mb{display:none}
+#sr{border-top:1px solid var(--bd);padding:8px 0}#sr input{width:100%}
+main{padding-top:20px;padding-bottom:56px}
+.hero{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:22px 24px;background:var(--sf);border:1px solid var(--bd);border-radius:10px}
+.hero h1{margin:0;font:700 clamp(30px,8vw,44px)/1.1 Cinzel,Georgia,serif;color:var(--mint);text-shadow:2px 1px 0 var(--pink)}
+.hero p{margin:6px 0 16px;color:var(--mu)}
+.art{width:190px;height:auto;flex:none}
+.note{font-size:13px;color:var(--mu);margin:10px 0 0}
+.cols{display:grid;gap:24px;margin-top:20px;grid-template-columns:minmax(0,1fr)}
+@media(min-width:900px){.cols{grid-template-columns:minmax(0,1fr) 310px}}
+.blk{margin-bottom:24px}
+.bh{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.bh h2,h2.t{margin:0;font-size:16px;font-weight:600}
+.more{background:none;border:0;color:var(--mu);cursor:pointer;display:flex;align-items:center;gap:2px;font-size:13px}.more:hover{color:var(--tx)}
+.bl{background:var(--sf);border:1px solid var(--bd);border-radius:10px;overflow:hidden}
+.bl>*+*{border-top:1px solid var(--bd)}
+.pg{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+.pg>.pr{background:var(--sf);border:1px solid var(--bd);border-radius:10px}
+.tr,.ir,.nr,.pr{display:grid;gap:12px;padding:12px 14px;cursor:pointer;align-items:center;min-width:0}
+.tr:hover,.ir:hover,.nr:hover,.pr:hover{background:var(--sf2)}
+.tr{grid-template-columns:34px minmax(0,1fr) 62px 150px}
+.ir{grid-template-columns:34px minmax(0,1fr);align-items:start}
+.nr{grid-template-columns:52px minmax(0,1fr)}
+.pr{grid-template-columns:36px minmax(0,1fr);align-items:start}
+.th{display:grid;grid-template-columns:34px minmax(0,1fr) 62px 150px;gap:12px;padding:0 14px 6px;font-size:12px;color:var(--mu)}
+.tt{font-weight:600;line-height:1.3;overflow-wrap:anywhere;display:flex;gap:6px;align-items:flex-start}
+.tg{display:flex;gap:6px 10px;flex-wrap:wrap;font-size:12.5px;color:var(--mu);margin-top:3px;align-items:center}
+.ex{margin:2px 0 0;color:var(--mu);font-size:14px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+.tl{font-size:12.5px;color:var(--mu);display:grid;gap:2px}.tl span,.ct{display:inline-flex;align-items:center;gap:4px}
+.tx{font-size:12.5px;color:var(--mu);min-width:0}.tx b{color:var(--tx);font-weight:500}
+.nd{font-size:12px;color:var(--mu);line-height:1.2}
+.cat{color:var(--tx);background:var(--sf2);border:1px solid var(--bd);border-radius:5px;padding:0 6px;font-size:12px}
+.demo{border:1px dashed var(--mu);border-radius:5px;padding:0 6px;font-size:11.5px}
+.st::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--mu);margin-right:5px}
+.s1::before{background:#5aa8f0}.s2::before{background:var(--ac)}.s3::before{background:var(--ok)}.s4::before{background:var(--er)}
+.av{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;font-weight:600;font-size:14px;color:#fff;flex:none}
+.av.s{width:20px;height:20px;border-radius:5px;font-size:11px}.av.l{width:72px;height:72px;font-size:30px;border-radius:14px}
+.lk{cursor:pointer;background:none;border:0;padding:0;color:var(--mu);display:inline-flex;align-items:center;gap:4px;font-size:12.5px}.lk:hover,.lk.on{color:var(--ac2)}.lk.on svg{fill:currentColor}
+.au{cursor:pointer;color:var(--tx)}.au:hover{color:var(--ac2)}
+.btn{background:var(--ac);color:#fff;border:0;border-radius:8px;padding:9px 16px;cursor:pointer;font-weight:500;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{background:var(--ac2)}.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.g{background:none;border:1px solid var(--bd);color:var(--tx)}.btn.g:hover{background:var(--sf2)}
+.ph{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.ph h1{margin:0;font-size:24px}
+.tb{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:center}
+.chips{display:flex;gap:6px;overflow-x:auto;max-width:100%;scrollbar-width:none;margin-bottom:10px}
+.chip{background:none;border:1px solid var(--bd);border-radius:6px;padding:4px 11px;cursor:pointer;font-size:13.5px;white-space:nowrap;color:var(--mu);flex:none}
+.chip.on{background:var(--sf2);color:var(--tx);border-color:var(--ac)}
+select,input,textarea{background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:8px 11px;max-width:100%;min-width:0}
+input:focus,textarea:focus,select:focus,button:focus-visible{outline:2px solid var(--ac);outline-offset:1px}
+.ov{position:fixed;inset:0;background:#000b;z-index:50;display:flex;justify-content:center;padding:16px 10px;overflow-y:auto}
+.md{background:var(--sf);border:1px solid var(--bd);border-radius:12px;max-width:620px;width:100%;padding:18px;margin:auto;overflow-wrap:anywhere}
+.md h3{margin:8px 0;font-size:21px;line-height:1.25}
+.mh{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.fm{display:grid;gap:10px}.fm label{display:grid;gap:4px;font-size:13px;color:var(--mu)}
+.rw{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.cm{border-top:1px solid var(--bd);padding:10px 0;font-size:14.5px}
+.pb{height:5px;border-radius:9px;background:var(--bd);overflow:hidden}.pb i{display:block;height:100%;width:0;transition:width .2s}
+.hint{font-size:13px;color:var(--mu);min-height:18px}.er{color:var(--er)}.okc{color:var(--ok)}
+.pw{display:flex;gap:6px}.pw input{flex:1}
+.toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--sf2);border:1px solid var(--ac);padding:9px 16px;border-radius:8px;z-index:99;max-width:90%;font-size:14px}
+.empty{text-align:center;color:var(--mu);padding:34px 14px}
+.box{background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:16px}
+.stt{display:flex;gap:20px;color:var(--mu);font-size:13px;margin:10px 0}.stt b{display:block;color:var(--tx);font-size:18px}
+footer{border-top:1px solid var(--bd);padding:16px 0;color:var(--mu);font-size:13px}
+@media(max-width:859px){
+nav{display:none;position:absolute;top:100%;left:-16px;right:-16px;flex-direction:column;align-items:stretch;background:var(--bg);border-bottom:1px solid var(--bd);padding:8px 16px}
+nav.open{display:flex}nav button{text-align:left;padding:11px 8px}
+.mb{display:inline-flex}#nv .mb{display:block}.dk{display:none}
+.art{display:none}.tr{grid-template-columns:34px minmax(0,1fr) auto}.tx,.th{display:none}.tl{grid-auto-flow:column;gap:10px}
+.hero{padding:18px 16px}}
+@media(max-width:400px){.wrap{padding:0 12px}.logo{font-size:19px}.tr{gap:10px;padding:11px 12px}}
+
+:root{--bg:#06060b;--sf:#0d0d16;--sf2:#151525;--bd:#22223a;--tx:#ebebf7;--mu:#8a8aab;--ac:#a35cff;--ac2:#c39bff;--bl:#3d8bff}
+body{background:#06060b}a{color:var(--bl)}
+header{background:#06060bee;backdrop-filter:blur(8px);box-shadow:0 1px 20px -10px var(--ac)}
+.btn{background:var(--ac);box-shadow:0 0 0 1px #c39bff55,0 0 18px -5px var(--ac);transition:box-shadow .2s,background .2s}
+.btn:hover{background:var(--ac2);box-shadow:0 0 26px -3px var(--ac)}.btn.g{box-shadow:none;border-color:var(--bd)}.btn.g:hover{border-color:var(--ac);box-shadow:0 0 16px -6px var(--ac)}
+.tr,.ir,.nr,.pr{transition:background .15s,box-shadow .15s}
+.tr:hover,.ir:hover,.nr:hover,.pr:hover{background:var(--sf2);box-shadow:inset 2px 0 0 var(--ac)}
+.hero,.auth{box-shadow:0 0 44px -24px var(--ac)}.hero{border-color:#2f2a52}
+.chip{transition:.15s}.chip:hover{color:var(--tx);border-color:var(--ac)}.chip.on{border-color:var(--bl);box-shadow:0 0 14px -6px var(--bl)}
+input:focus,textarea:focus,select:focus{outline:0;border-color:var(--bl);box-shadow:0 0 0 3px #3d8bff2a}
+button:focus-visible{outline:2px solid var(--bl)}
+.st.s1::before{background:var(--bl)}.lk:hover,.lk.on{color:var(--ac2)}
+.empty b{display:block;color:var(--tx);font-size:16px;margin-bottom:2px}.empty p{margin:0 0 12px}
+.gate{min-height:calc(100vh - 150px);display:grid;place-items:center}.auth{width:100%;max-width:420px;padding:24px}
+.tabs{display:grid;grid-template-columns:1fr 1fr;background:var(--sf2);border:1px solid var(--bd);border-radius:10px;padding:3px;margin-bottom:12px}
+.tabs button{background:none;border:0;padding:8px;border-radius:8px;color:var(--mu);cursor:pointer;font-weight:500}
+.tabs button.on{background:var(--sf);color:var(--tx);box-shadow:inset 0 0 0 1px var(--ac),0 0 14px -5px var(--ac)}
+.out nav,.out #i_s,.out #i_b,.out #ub,.out .mb,.out .dk,.out #sr{display:none!important}
+@keyframes in{from{opacity:0;transform:translateY(6px)}}#app>*{animation:in .3s ease both}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.av{overflow:hidden}.av img{width:100%;height:100%;object-fit:cover;display:block}
+.stt{flex-wrap:wrap}.cm{overflow-wrap:anywhere}textarea{resize:vertical}.tr .tt span{min-width:0}
+@media(max-width:400px){nav{left:-12px;right:-12px}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><div class="bar">
+<div class="logo" data-a="nav" data-v="home">GlitchZone</div>
+<nav id="nv"></nav><div class="sp"></div>
+<button class="ib" data-a="search" aria-label="Поиск" id="i_s"></button>
+<button class="ib" data-a="bell" aria-label="Уведомления" id="i_b"><span id="bd" class="bdg" hidden></span></button>
+<button class="btn g dk" id="ub" data-a="prof"></button>
+<button class="ib mb" data-a="menu" aria-label="Меню" id="i_m"></button>
+</div><div id="sr" hidden><input id="gs" placeholder="Поиск по сайту" aria-label="Поиск"></div></div></header>
+<main class="wrap" id="app"></main>
+<footer class="wrap">GlitchZone Community. Данные хранятся только в вашем браузере.</footer>
+<div id="md"></div><div id="ts"></div>
+<script>
+const $=s=>document.querySelector(s),K='gz-v3',now=Date.now(),H=n=>now-n*36e5;
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const hs=s=>{let h=5381;for(const c of s)h=(h*33^c.charCodeAt(0))>>>0;return h};
+const P={search:'<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',moon:'<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>',menu:'<path d="M4 6h16M4 12h16M4 18h16"/>',x:'<path d="M18 6 6 18M6 6l12 12"/>',heart:'<path d="M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.8 0-3 .5-4.5 2-1.5-1.5-2.7-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7Z"/>',msg:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',plus:'<path d="M5 12h14M12 5v14"/>',pin:'<path d="M12 17v5M9 10.8a2 2 0 0 1-1.1 1.8l-1.8.9A2 2 0 0 0 5 15.2V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.8a2 2 0 0 0-1.1-1.8l-1.8-.9A2 2 0 0 1 15 10.8V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/>',eye:'<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>',trash:'<path d="M3 6h18M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2"/>',chev:'<path d="m9 18 6-6-6-6"/>',link:'<path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/>',edit:'<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>',out:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>'};
+const ic=(n,s=18)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[n]}</svg>`;
+const KN={news:'Новость',article:'Статья',idea:'Идея',post:'Публикация',topic:'Тема',project:'Проект'};
+const FC=['Идеи','Баги','Игры','Помощь','Обсуждения','Другое'],PC=['Игры','Сайты','Боты','Приложения','Прочее'],ST=['Новое','Запланировано','В работе','Готово','Отклонено'];
+const HUE=[258,205,165,320,30,215],HN=['Фиолетовый','Синий','Бирюзовый','Розовый','Оранжевый','Графитовый'];
+const NAV=[['home','Главная'],['forum','Форум'],['feed','Лента'],['articles','Статьи'],['ideas','Идеи'],['projects','Проекты'],['news','Новости']];
+const CFG={forum:{k:'topic',n:'topic',cats:FC,st:1},feed:{n:'post',kinds:1},articles:{k:'article',n:'article'},ideas:{k:'idea',n:'idea',st:1},projects:{k:'project',n:'project',cats:PC},news:{k:'news',n:'news'},search:{}};
+const T={forum:'Форум',feed:'Лента',articles:'Статьи',ideas:'Идеи',projects:'Проекты',news:'Новости',search:'Результаты поиска'};
+let id=0;try{['gz-demo-v1','gz-demo-v2'].forEach(k=>localStorage.removeItem(k))}catch(e){}
+const seed=()=>({me:null,users:[],notifs:[],items:[]});
+let S;try{S=JSON.parse(localStorage.getItem(K))}catch(e){}
+if(!S||!S.items)S=seed();id=Math.max(0,...S.items.map(i=>i.id));
+const sv=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}};
+let page='home',F={cat:'',sort:'new',q:'',kind:'',st:''},view=null;
+const U=n=>S.users.find(u=>u.n==n)||{n,role:'Участник',bio:'',j:Date.now()};
+const dt=d=>new Date(d).toLocaleDateString('ru-RU',{day:'numeric',month:'short',year:'numeric'});
+const ago=d=>{const m=(Date.now()-d)/6e4;return m<2?'только что':m<60?Math.floor(m)+' мин назад':m<1440?Math.floor(m/60)+' ч назад':dt(d)};
+const av=(n,c='')=>{const u=U(n),h=HUE[u.col!=null?u.col:hs(n)%5];return u.img?`<span class="av ${c}"><img src="${esc(u.img)}" alt=""></span>`:`<span class="av ${c}" style="background:hsl(${h} ${u.col==5?'8%':'34%'} 38%)">${esc(n[0].toUpperCase())}</span>`};
+const au=n=>`<span class="au" data-a="user" data-v="${esc(n)}">${esc(n)}</span>`;
+const stt=i=>i.st?`<span class="st s${ST.indexOf(i.st)}">${esc(i.st)}</span>`:'';
+const dm=i=>i.demo?'<span class="demo">Пример</span>':'';
+const lm=i=>i.c.length?i.c[i.c.length-1]:{a:i.a,d:i.d};
+function toast(m){const e=document.createElement('div');e.className='toast';e.textContent=m;$('#ts').append(e);setTimeout(()=>e.remove(),2600)}
+function go(p){F={cat:'',sort:'new',q:'',kind:'',st:''};view=null;location.hash=p}
+const lkb=i=>{const o=S.me&&i.l.includes(S.me);return `<button class="lk ${o?'on':''}" data-a="like" data-v="${i.id}" aria-label="Нравится">${ic('heart',14)}${i.l.length}</button>`};
+const trow=i=>{const l=lm(i);return `<div class="tr" data-a="open" data-v="${i.id}">${av(i.a)}<div><div class="tt">${i.pin?ic('pin',14):''}<span>${esc(i.t)}</span></div><div class="tg"><span class="cat">${esc(i.cat||'')}</span>${stt(i)}<span>${au(i.a)}, ${ago(i.d)}</span>${dm(i)}</div></div><div class="tl"><span>${ic('msg',14)}${i.c.length}</span><span>${ic('heart',14)}${i.l.length}</span></div><div class="tx"><b>${esc(l.a)}</b><br>${ago(l.d)}</div></div>`};
+const irow=i=>`<div class="ir" data-a="open" data-v="${i.id}">${av(i.a)}<div><div class="tt">${esc(i.t)}</div><p class="ex">${esc(i.b)}</p><div class="tg"><span class="cat">${i.cat&&i.k!='topic'?esc(i.cat):KN[i.k]}</span>${stt(i)}<span>${au(i.a)}, ${ago(i.d)}</span>${lkb(i)}<span class="ct">${ic('msg',14)}${i.c.length}</span>${dm(i)}</div></div></div>`;
+const nrow=i=>`<div class="nr" data-a="open" data-v="${i.id}"><div class="nd">${new Date(i.d).toLocaleDateString('ru-RU',{day:'numeric',month:'short'})}</div><div><div class="tt">${esc(i.t)}</div>${i.demo?'<div class="tg">'+dm(i)+'</div>':''}</div></div>`;
+const prow=(i,f)=>`<div class="pr" data-a="open" data-v="${i.id}"><span class="av" style="background:hsl(${HUE[hs(i.t)%5]} 34% 38%)">${esc(i.t[0])}</span><div><div class="tt">${esc(i.t)}</div>${f?`<p class="ex">${esc(i.b)}</p>`:''}<div class="tg"><span class="cat">${esc(i.cat)}</span>${stt(i)}<span>${au(i.a)}</span>${lkb(i)}${dm(i)}</div></div></div>`;
+const blk=(t,p,h,e)=>`<section class="blk"><div class="bh"><h2>${t}</h2><button class="more" data-a="nav" data-v="${p}">Все${ic('chev',14)}</button></div><div class="bl">${h||`<div class="empty"><b>${e[0]}</b><p>${e[1]}</p><button class="btn" data-a="new" data-v="${e[2]}">${ic('plus',16)}${e[3]}</button></div>`}</div></section>`;
+const by=k=>S.items.filter(i=>i.k==k);
+function home(){const tp=by('topic').sort((a,b)=>lm(b).d-lm(a).d).slice(0,5),ps=S.items.filter(i=>i.k=='post'||i.k=='article').sort((a,b)=>b.d-a.d).slice(0,4);
+return `<section class="hero"><div><h1>GlitchZone</h1><p>Место, где рождаются цифровые идеи</p><div class="rw"><button class="btn" data-a="new" data-v="topic">${ic('plus',16)}Создать тему</button><button class="btn g" data-a="nav" data-v="forum">Исследовать сообщество</button></div></div></section>
+<div class="cols"><div>${blk('Последние обсуждения','forum',tp.map(trow).join(''),['Пока здесь тихо','Начни обсуждение: создай первую тему форума.','topic','Создать тему'])}${blk('Свежие публикации','feed',ps.map(irow).join(''),['Лента пуста','Опубликуй первую запись сообщества.','post','Опубликовать'])}</div>
+<aside>${blk('Новости','news',by('news').sort((a,b)=>b.d-a.d).slice(0,4).map(nrow).join(''),['Новостей пока нет','Здесь появятся объявления сообщества.','news','Добавить новость'])}${blk('Популярные проекты','projects',by('project').sort((a,b)=>b.l.length-a.l.length).slice(0,3).map(i=>prow(i)).join(''),['Проектов пока нет','Расскажи о своей игре, боте или сайте.','project','Добавить проект'])}
+<div class="box"><b>О сообществе</b><p class="ex" style="-webkit-line-clamp:unset">Площадка для авторов игр, ботов и сайтов: форум, статьи, проекты и идеи в одном месте.</p></div></aside></div>`}
+function listPage(){const c=CFG[page],ch=(arr,key)=>`<div class="chips"><button class="chip ${F[key]?'':'on'}" data-a="f" data-k="${key}" data-v="">Все</button>`+arr.map(x=>{const v=key=='kind'?x[0]:x;return `<button class="chip ${F[key]==v?'on':''}" data-a="f" data-k="${key}" data-v="${esc(v)}">${esc(key=='kind'?x[1]:x)}</button>`}).join('')+'</div>';
+return `<div class="ph"><h1>${T[page]}</h1>${c.n?`<button class="btn" data-a="new" data-v="${c.n}">${ic('plus',16)}Создать</button>`:''}</div>${c.cats?ch(c.cats,'cat'):''}${c.kinds?ch(Object.entries(KN),'kind'):''}
+<div class="tb"><input id="lq" placeholder="Поиск в разделе" value="${esc(F.q)}" style="flex:1;min-width:140px"><select data-a="sort" aria-label="Сортировка"><option value="new">Новые</option><option value="pop">Популярные</option><option value="disc">Обсуждаемые</option></select>${c.st?`<select data-a="st" aria-label="Статус"><option value="">Любой статус</option>${ST.map(s=>`<option>${s}</option>`).join('')}</select>`:''}</div>
+${page=='forum'?'<div class="th"><span></span><span>Тема</span><span>Ответы</span><span>Последнее сообщение</span></div>':''}<div id="lst" class="${page=='projects'?'pg':'bl'}"></div>`}
+const EM={forum:['Пока здесь тихо','Создай первую тему и начни обсуждение.','Создать тему'],feed:['Лента пуста','Опубликуй первую запись.','Опубликовать'],articles:['Статей пока нет','Напиши первую статью.','Написать статью'],ideas:['Идей пока нет','Опубликуй первую идею.','Опубликовать идею'],projects:['Проектов пока нет','Добавь первый проект.','Добавить проект'],news:['Новостей пока нет','Добавь первую новость.','Добавить новость']};
+function emp(c,q){const g='<div class="empty" style="grid-column:1/-1">';if(page=='search')return g+(q?'Ничего не найдено.':'Введите запрос в строке поиска.')+'</div>';if(F.cat&&c.n&&!S.items.some(i=>(!c.k||i.k==c.k)&&i.cat==F.cat))return g+`<b>В категории «${esc(F.cat)}» пока пусто</b><p>Создай первую запись.</p><button class="btn" data-a="new" data-v="${c.n}">${ic('plus',16)}Создать</button></div>`;if(S.items.some(i=>!c.k||i.k==c.k))return g+'Ничего не найдено. Измените фильтры.</div>';const e=EM[page];return g+`<b>${e[0]}</b><p>${e[1]}</p>`+(c.n?`<button class="btn" data-a="new" data-v="${c.n}">${ic('plus',16)}${e[2]}</button>`:'')+'</div>'}
+function fill(){const c=CFG[page];if(!c)return;const q=F.q.toLowerCase();
+let a=S.items.filter(i=>(!c.k||i.k==c.k)&&(!F.cat||i.cat==F.cat)&&(!F.kind||i.k==F.kind)&&(!F.st||i.st==F.st)&&(!q||(i.t+' '+i.b).toLowerCase().includes(q)));
+a.sort((x,y)=>(y.pin||0)-(x.pin||0)||(F.sort=='pop'?y.l.length-x.l.length:F.sort=='disc'?y.c.length-x.c.length:y.d-x.d));
+const R=page=='forum'?trow:page=='projects'?(i=>prow(i,1)):irow;let h=a.map(R).join('');
+if(page=='search'){h=q?S.users.filter(u=>u.n.toLowerCase().includes(q)).map(u=>`<div class="ir" data-a="user" data-v="${esc(u.n)}" style="align-items:center">${av(u.n)}<div><div class="tt">${esc(u.n)}</div><div class="tg">${esc(u.role)}</div></div></div>`).join('')+h:''}
+$('#lst').innerHTML=h||emp(c,q);
+const s=document.querySelector('[data-a=sort]');if(s)s.value=F.sort;const t=document.querySelector('[data-a=st]');if(t)t.value=F.st}
+function stat(n){const m=S.items.filter(i=>i.a==n);return{p:m.length,c:S.items.reduce((s,i)=>s+i.c.filter(x=>x.a==n).length,0),l:m.reduce((s,i)=>s+i.l.length,0),m:m.sort((a,b)=>b.d-a.d)}}
+function profile(){const n=view||S.me;if(!n)return `<div class="box empty">Войдите, чтобы открыть профиль.<br><br><button class="btn" data-a="nav" data-v="login">Войти</button></div>`;
+const u=U(n),s=stat(n),own=n==S.me;
+return `<div class="box"><div class="rw" style="gap:16px">${av(n,'l')}<div><h1 style="margin:0;font-size:24px">${esc(n)}</h1><div class="tg"><span class="cat">${esc(u.role)}</span>${dm(u)}<span>на сайте с ${dt(u.j)}</span></div></div></div><p>${esc(u.bio||'Пока без описания.')}</p>
+<div class="stt"><span><b>${s.p}</b>публикаций</span><span><b>${s.c}</b>комментариев</span><span><b>${s.l}</b>лайков</span></div>${own?`<div class="rw"><button class="btn g" data-a="editp">${ic('edit',16)}Редактировать</button><button class="btn g" data-a="logout">${ic('out',16)}Выйти</button></div>`:''}</div>
+<div class="bh" style="margin-top:20px"><h2>Публикации</h2></div><div class="bl">${s.m.map(irow).join('')||'<div class="empty">Пока ничего нет.</div>'}</div>`}
+function auth(reg){return `<div class="gate"><div class="box auth"><div class="logo" style="font-size:30px;margin:0 0 2px">GlitchZone</div><p class="hint" style="margin:0 0 16px">Место, где рождаются цифровые идеи</p><div class="tabs"><button class="${reg?'on':''}" data-a="nav" data-v="register">Регистрация</button><button class="${reg?'':'on'}" data-a="nav" data-v="login">Вход</button></div><p class="hint">Содержимое сообщества доступно только после входа. Аккаунт хранится только в этом браузере: это не серверная авторизация.</p><div class="fm">
+<label>Никнейм<input id="a_n" autocomplete="username" maxlength="16"></label><div class="hint" id="h_n"></div>
+<label>Пароль<span class="pw"><input id="a_p" type="password" autocomplete="${reg?'new':'current'}-password"><button class="ib" style="border-color:var(--bd)" data-a="eye" type="button" aria-label="Показать пароль">${ic('eye')}</button></span></label>
+${reg?`<div class="pb"><i id="bar"></i></div><div class="hint" id="h_p">От 8 символов, строчные и заглавные буквы, цифра или символ.</div><label>Повтор пароля<input id="a_r" type="password" autocomplete="new-password"></label><div class="hint" id="h_r"></div>`:'<div class="hint er" id="h_e"></div>'}
+<button class="btn" style="justify-content:center" id="a_b" data-a="${reg?'reg':'login'}" ${reg?'disabled':''}>${reg?'Создать аккаунт':'Войти'}</button>
+</div></div></div></div>`}
+const PAGES={home,profile,register:()=>auth(1),login:()=>auth(0)};
+function sc(p){let s=0;if(p.length>=8)s++;if(/[a-zа-я]/.test(p)&&/[A-ZА-Я]/.test(p))s++;if(/\d/.test(p))s++;if(/[^\w\s]/.test(p))s++;return s}
+function chk(){const n=$('#a_n').value,p=$('#a_p').value,r=$('#a_r').value;let ok=1;
+const nm=/^[A-Za-z0-9_]{3,16}$/.test(n),tk=S.users.some(u=>u.n.toLowerCase()==n.toLowerCase());
+$('#h_n').innerHTML=!n?'':!nm?'<span class="er">3–16 символов: латиница, цифры, _</span>':tk?'<span class="er">Ник занят</span>':'<span class="okc">Ник свободен</span>';
+if(!nm||tk)ok=0;const s=sc(p),b=$('#bar');b.style.width=s*25+'%';b.style.background=['#ef6b6b','#ef6b6b','#e0a84a','#5aa8f0','#4ecb9a'][s];
+if(p.length<8||s<3)ok=0;$('#h_r').innerHTML=!r?'':r==p?'<span class="okc">Пароли совпадают</span>':'<span class="er">Пароли не совпадают</span>';if(r!=p||!r)ok=0;$('#a_b').disabled=!ok}
+function draw(){page=location.hash.slice(1)||'home';if(!S.me&&page!='login')page='register';if(S.me&&(page=='login'||page=='register'))page='home';if(!PAGES[page]&&!CFG[page])page='home';
+$('#app').innerHTML=(PAGES[page]||listPage)();$('#nv').classList.remove('open');if(CFG[page])fill();
+$('#nv').innerHTML=NAV.map(x=>`<button class="${page==x[0]?'on':''}" data-a="nav" data-v="${x[0]}">${x[1]}</button>`).join('')+`<button class="mb" data-a="prof">${S.me?'Профиль: '+esc(S.me):'Войти'}</button>`;
+$('#i_s').innerHTML=ic('search');$('#i_m').innerHTML=ic('menu');
+$('#i_b').firstChild&&0;const b=$('#bd');$('#i_b').innerHTML=ic('bell');$('#i_b').append(b);
+$('#ub').textContent=S.me?S.me:'Войти';const n=S.notifs.filter(x=>!x.r&&(x.to==S.me||x.to=='*')).length;b.hidden=!n;b.textContent=n;
+document.body.classList.toggle('out',!S.me)}
+function modal(h){$('#md').innerHTML=`<div class="ov" data-a="close"><div class="md">${h}</div></div>`}
+const xb=`<button class="ib" data-a="close" aria-label="Закрыть">${ic('x')}</button>`;
+function detail(i){const own=S.me&&S.me==i.a,o=S.me&&i.l.includes(S.me);
+return `<div class="mh"><div class="tg" style="margin:0"><span class="cat">${i.cat&&i.k!='topic'&&i.k!='project'?esc(i.cat):KN[i.k]}</span>${i.k=='topic'||i.k=='project'?`<span class="cat">${esc(i.cat)}</span>`:''}${stt(i)}</div>${xb}</div><h3>${esc(i.t)}</h3><div class="tg" style="margin:0 0 12px">${av(i.a,'s')}<span>${au(i.a)}, ${dt(i.d)}${i.ed?', изменено '+dt(i.ed):''}</span></div>
+<p style="white-space:pre-wrap;margin:0 0 12px">${esc(i.b)}</p>${/^https?:\/\//.test(i.link||'')?`<p><a href="${esc(i.link)}" target="_blank" rel="noopener noreferrer">${ic('link',14)} Ссылка на проект</a></p>`:''}
+<div class="rw"><button class="btn ${o?'':'g'}" data-a="like" data-v="${i.id}" data-m="1">${ic('heart',16)}${i.l.length}</button>${own?`<button class="btn g" data-a="edit" data-v="${i.id}">${ic('edit',16)}Изменить</button><button class="btn g" data-a="del" data-v="${i.id}">${ic('trash',16)}Удалить</button>`:''}</div>
+<h2 class="t" style="margin:18px 0 4px">${i.k=='topic'?'Ответы':'Комментарии'} (${i.c.length})</h2>${i.c.map((c,x)=>`<div class="cm"><div class="tg" style="margin:0 0 3px;justify-content:space-between"><span class="rw" style="gap:6px">${av(c.a,'s')}<b style="color:var(--tx)">${esc(c.a)}</b>${ago(c.d)}</span>${S.me==c.a?`<button class="lk" data-a="cdel" data-v="${i.id}" data-x="${x}" aria-label="Удалить комментарий">${ic('trash',14)}</button>`:''}</div><div style="white-space:pre-wrap">${esc(c.t)}</div></div>`).join('')||'<div class="hint" style="padding:8px 0">Пока никто не ответил. Напиши первым.</div>'}
+<div class="fm" style="margin-top:10px"><textarea id="cmt" rows="2" maxlength="500" placeholder="${i.k=='topic'?'Твой ответ':'Твой комментарий'}"></textarea><button class="btn" style="justify-self:start" data-a="cmt" data-v="${i.id}">Отправить</button></div>`}
+const form=(k,i)=>{const cs=k=='topic'?FC:k=='project'?PC:null,ss=k=='topic'||k=='idea'?ST:k=='project'?['Идея','В разработке','Готов']:null,c=i?i.cat:(F.cat&&cs&&cs.includes(F.cat)?F.cat:'');
+return `<label>Заголовок<input id="f_t" maxlength="100" value="${i?esc(i.t):''}"></label><label>Текст<textarea id="f_b" rows="7" maxlength="3000">${i?esc(i.b):''}</textarea></label>${cs?`<label>Категория<select id="f_c">${cs.map(x=>`<option ${x==c?'selected':''}>${x}</option>`).join('')}</select></label>`:''}${i&&ss?`<label>Статус<select id="f_s">${ss.map(x=>`<option ${x==i.st?'selected':''}>${x}</option>`).join('')}</select></label>`:''}${k=='project'?`<label>Ссылка (https://…)<input id="f_l" value="${i?esc(i.link||''):''}"></label>`:''}<div class="hint er" id="f_e"></div>`};
+function rd(){const t=$('#f_t').value.trim(),b=$('#f_b').value.trim(),l=$('#f_l')?$('#f_l').value.trim():'';let e='';if(t.length<3)e='Заголовок: минимум 3 символа.';else if(b.length<3)e='Текст: минимум 3 символа.';else if(l&&!/^https?:\/\/\S+$/.test(l))e='Ссылка должна начинаться с http:// или https://';if(e){$('#f_e').textContent=e;return null}return{t,b,l}}
+async function pwh(sl,p){const x=sl+':'+p;try{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(x));return [...new Uint8Array(b)].map(v=>v.toString(16).padStart(2,'0')).join('')}catch(e){return 'h'+hs(x)}}
+const rnd=()=>{try{return [...crypto.getRandomValues(new Uint8Array(8))].map(v=>v.toString(16).padStart(2,'0')).join('')}catch(e){return String(Math.random()).slice(2)}};
+async function doReg(){const n=$('#a_n').value,b=$('#a_b');if(S.users.some(u=>u.n.toLowerCase()==n.toLowerCase()))return;b.disabled=true;b.textContent='Создаём аккаунт…';const sl=rnd(),pw=await pwh(sl,$('#a_p').value);S.users.push({n,role:'Участник',bio:'',col:hs(n)%5,j:Date.now(),s:sl,pw});S.me=n;sv();toast('Добро пожаловать, '+n);go('home');draw()}
+async function doLogin(){const n=$('#a_n').value.trim(),p=$('#a_p').value,b=$('#a_b'),u=S.users.find(u=>u.n.toLowerCase()==n.toLowerCase());b.disabled=true;b.textContent='Проверяем…';let ok=false;if(u){if(typeof u.pw=='number'){ok=u.pw==hs(p);if(ok){u.s=rnd();u.pw=await pwh(u.s,p)}}else ok=u.pw==await pwh(u.s||'',p)}
+if(ok){S.me=u.n;sv();toast('Вы вошли как '+u.n);go('home');draw()}else{b.disabled=false;b.textContent='Войти';$('#h_e').textContent='Неверный ник или пароль.';$('#a_p').value=''}}
+let pend;
+function avUpload(f){const file=f.files[0];if(!file)return;const h=$('#av_h');if(!/^image\/(png|jpeg|webp)$/.test(file.type)){h.textContent='Допустимы только PNG, JPG и WebP.';h.className='hint er';return}if(file.size>2*1048576){h.textContent='Файл больше 2 МБ.';h.className='hint er';return}
+h.textContent='Обработка…';h.className='hint';const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const c=document.createElement('canvas');c.width=c.height=128;const m=Math.min(im.width,im.height);c.getContext('2d').drawImage(im,(im.width-m)/2,(im.height-m)/2,m,m,0,0,128,128);pend=c.toDataURL('image/jpeg',.85);$('#av_pv').innerHTML=`<span class="av l"><img src="${pend}" alt=""></span>`;h.textContent='Фото выбрано. Нажмите «Сохранить».'};im.onerror=()=>{h.textContent='Не удалось прочитать изображение.';h.className='hint er'};im.src=r.result};r.readAsDataURL(file)}
+function need(){if(S.me)return 1;toast('Сначала войдите или зарегистрируйтесь');$('#md').innerHTML='';go('login');return 0}
+function notify(to,t,i){S.notifs.unshift({to,t,i,d:Date.now(),r:0})}
+document.addEventListener('click',e=>{const el=e.target.closest('[data-a]');if(!el)return;const a=el.dataset.a,v=el.dataset.v;
+if(a=='close'){if(el.classList.contains('ov')&&e.target!=el)return;$('#md').innerHTML='';return}
+const find=()=>S.items.find(i=>i.id==v);
+switch(a){
+case'nav':go(v);break;case'menu':$('#nv').classList.toggle('open');break;
+case'search':{const s=$('#sr');s.hidden=!s.hidden;if(!s.hidden)$('#gs').focus();break}
+case'prof':go(S.me?'profile':'login');break;
+case'user':$('#md').innerHTML='';view=v;location.hash='profile';draw();break;
+case'f':F[el.dataset.k]=v;draw();break;
+case'open':modal(detail(find()));break;
+case'like':{e.stopPropagation();if(!need())break;const i=find(),x=i.l.indexOf(S.me);if(x<0){i.l.push(S.me);if(i.a!=S.me)notify(i.a,S.me+' оценил(а): «'+i.t.slice(0,40)+'»',i.id)}else i.l.splice(x,1);sv();draw();if(el.dataset.m)modal(detail(i));break}
+case'cmt':{if(!need())break;const i=find(),t=$('#cmt').value.trim();if(!t){toast('Напишите текст комментария');break}i.c.push({a:S.me,t,d:Date.now()});if(i.a!=S.me)notify(i.a,S.me+' ответил(а): «'+i.t.slice(0,40)+'»',i.id);sv();draw();modal(detail(i));break}
+case'del':modal(`<h3>Удалить запись?</h3><p class="hint">Вместе с ней удалятся комментарии. Действие нельзя отменить.</p><div class="rw"><button class="btn" data-a="delok" data-v="${v}">Удалить</button><button class="btn g" data-a="close">Отмена</button></div>`);break;
+case'delok':{const i=find();if(i&&i.a==S.me){S.items=S.items.filter(x=>x.id!=i.id);S.notifs=S.notifs.filter(n=>n.i!=i.id);sv();$('#md').innerHTML='';draw();toast('Запись удалена')}break}
+case'cdel':{const i=find(),x=+el.dataset.x;if(i&&i.c[x]&&i.c[x].a==S.me){i.c.splice(x,1);sv();draw();modal(detail(i))}break}
+case'new':{if(!need())break;const k=v;modal(`<div class="mh"><h3 style="margin:0">Новая запись: ${KN[k].toLowerCase()}</h3>${xb}</div><div class="fm" style="margin-top:12px">${form(k)}<div class="rw"><button class="btn" data-a="save" data-v="${k}">Опубликовать</button><button class="btn g" data-a="close">Отмена</button></div></div>`);break}
+case'save':{const r=rd();if(!r)break;const x={};if($('#f_c'))x.cat=$('#f_c').value;if(v=='topic'||v=='idea')x.st='Новое';if(v=='project'){x.st='Идея';x.link=r.l}const i={id:++id,k:v,t:r.t,b:r.b,a:S.me,d:Date.now(),l:[],c:[],...x};S.items.push(i);sv();draw();modal(detail(i));toast('Опубликовано');break}
+case'edit':{const i=find();if(!i||i.a!=S.me)break;modal(`<div class="mh"><h3 style="margin:0">Редактирование</h3>${xb}</div><div class="fm" style="margin-top:12px">${form(i.k,i)}<div class="rw"><button class="btn" data-a="upd" data-v="${i.id}">Сохранить</button><button class="btn g" data-a="open" data-v="${i.id}">Отмена</button></div></div>`);break}
+case'upd':{const i=find();if(!i||i.a!=S.me)break;const r=rd();if(!r)break;i.t=r.t;i.b=r.b;if($('#f_c'))i.cat=$('#f_c').value;if($('#f_s'))i.st=$('#f_s').value;if(i.k=='project')i.link=r.l;i.ed=Date.now();sv();draw();modal(detail(i));toast('Изменения сохранены');break}
+case'bell':{const m=S.notifs.filter(n=>n.to==S.me);modal(`<div class="mh"><h3 style="margin:0">Уведомления</h3>${xb}</div>${m.map(n=>`<div class="cm" style="cursor:pointer;${n.r?'opacity:.55':''}" data-a="ntf" data-v="${n.i||0}" data-x="${n.d}">${esc(n.t)}<div class="hint">${ago(n.d)}</div></div>`).join('')||'<div class="empty"><b>Пока здесь тихо</b><p>Уведомления появятся, когда кто-то ответит или оценит твою запись.</p></div>'}${m.length?'<div class="rw" style="margin-top:10px"><button class="btn" data-a="readall">Прочитать все</button></div>':''}`);break}
+case'ntf':{const n=S.notifs.find(x=>x.d==el.dataset.x);if(n)n.r=1;sv();const i=find();draw();if(i)modal(detail(i));else $('#md').innerHTML='';break}
+case'readall':S.notifs.forEach(n=>{if(n.to==S.me||n.to=='*')n.r=1});sv();$('#md').innerHTML='';draw();break;
+case'eye':{const p=$('#a_p');p.type=p.type=='password'?'text':'password';break}
+case'reg':doReg();break;
+case'login':doLogin();break;
+case'logout':S.me=null;sv();toast('Вы вышли');go('home');break;
+case'editp':{const u=U(S.me),c=u.col!=null?u.col:hs(S.me)%5;pend=undefined;modal(`<div class="mh"><h3 style="margin:0">Редактировать профиль</h3>${xb}</div><div class="fm" style="margin-top:12px"><div class="rw" style="gap:14px"><span id="av_pv">${av(S.me,'l')}</span><div class="rw"><button class="btn g" data-a="avpick">Загрузить фото</button>${u.img?'<button class="btn g" data-a="avrm">Убрать фото</button>':''}</div></div><input id="av_f" type="file" accept="image/png,image/jpeg,image/webp" hidden><div class="hint" id="av_h">PNG, JPG или WebP до 2 МБ.</div>
+<label>Никнейм<input id="e_n" maxlength="16" value="${esc(S.me)}"></label><label>Цвет аватара (если нет фото)<select id="e_a">${HN.map((x,j)=>`<option value="${j}" ${j==c?'selected':''}>${x}</option>`).join('')}</select></label><label>О себе (до 160 символов)<textarea id="e_b" rows="3" maxlength="160">${esc(u.bio)}</textarea></label><div class="hint er" id="e_e"></div><div class="rw"><button class="btn" data-a="savep">Сохранить</button><button class="btn g" data-a="close">Отмена</button></div></div>`);break}
+case'avpick':$('#av_f').click();break;
+case'avrm':pend=null;$('#av_pv').innerHTML='<span class="av l" style="background:var(--sf2)"></span>';$('#av_h').textContent='Фото будет удалено после сохранения.';break;
+case'savep':{const u=U(S.me),n=$('#e_n').value.trim(),e=$('#e_e'),o=S.me;
+if(!/^[A-Za-z0-9_]{3,16}$/.test(n)){e.textContent='Ник: 3–16 символов, латиница, цифры и _';break}
+if(n.toLowerCase()!=o.toLowerCase()&&S.users.some(x=>x.n.toLowerCase()==n.toLowerCase())){e.textContent='Этот ник уже занят';break}
+u.col=+$('#e_a').value;u.bio=$('#e_b').value.trim();if(pend!==undefined){if(pend)u.img=pend;else delete u.img}pend=undefined;
+if(n!=o){u.n=n;S.items.forEach(i=>{if(i.a==o)i.a=n;i.l=i.l.map(x=>x==o?n:x);i.c.forEach(c=>{if(c.a==o)c.a=n})});S.notifs.forEach(x=>{if(x.to==o)x.to=n});S.me=n;if(view==o)view=n}
+sv();$('#md').innerHTML='';draw();toast('Профиль сохранён');break}
+}});
+document.addEventListener('input',e=>{const t=e.target;
+if(t.id=='gs'){F.q=t.value;if(page!='search'){F.sort='new';location.hash='search'}else fill()}
+else if(t.id=='lq'){F.q=t.value;fill()}
+else if(['a_n','a_p','a_r'].includes(t.id)&&$('#bar'))chk()});
+document.addEventListener('change',e=>{if(e.target.id=='av_f'){avUpload(e.target);return}const a=e.target.dataset.a;if(a=='sort'){F.sort=e.target.value;fill()}if(a=='st'){F.st=e.target.value;fill()}});
+document.addEventListener('keydown',e=>{if(e.key=='Escape'){$('#md').innerHTML='';$('#sr').hidden=true}});
+document.addEventListener('keydown',e=>{if(e.key=='Enter'&&['a_n','a_p','a_r'].includes(e.target.id)){const b=$('#a_b');if(b&&!b.disabled)b.click()}});
+addEventListener('hashchange',()=>{draw();scrollTo(0,0)});
+draw();
+</script>
+</body>
+</html>
