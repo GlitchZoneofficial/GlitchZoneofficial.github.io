@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>GlitchZone Community</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Inter:wght@400;500;600&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.1"></script>
 <style>
 :root{--bg:#101114;--sf:#17181d;--sf2:#1e2027;--bd:#272a33;--tx:#e6e7ec;--mu:#8d92a3;--ac:#8b6cf0;--ac2:#a48df5;--mint:#6fe3cb;--pink:#b45ac8;--er:#ef6b6b;--ok:#4ecb9a;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 *{box-sizing:border-box}html{scroll-padding-top:64px}
@@ -118,6 +119,7 @@ button:focus-visible{outline:2px solid var(--bl)}
 .av{overflow:hidden}.av img{width:100%;height:100%;object-fit:cover;display:block}
 .stt{flex-wrap:wrap}.cm{overflow-wrap:anywhere}textarea{resize:vertical}.tr .tt span{min-width:0}
 @media(max-width:400px){nav{left:-12px;right:-12px}}
+.sk{height:58px;border-bottom:1px solid var(--bd);background:linear-gradient(90deg,var(--sf) 0,var(--sf2) 50%,var(--sf) 100%);background-size:200% 100%;animation:sh 1.2s infinite}@keyframes sh{to{background-position:-200% 0}}
 </style>
 </head>
 <body>
@@ -130,7 +132,7 @@ button:focus-visible{outline:2px solid var(--bl)}
 <button class="ib mb" data-a="menu" aria-label="Меню" id="i_m"></button>
 </div><div id="sr" hidden><input id="gs" placeholder="Поиск по сайту" aria-label="Поиск"></div></div></header>
 <main class="wrap" id="app"></main>
-<footer class="wrap">GlitchZone Community. Данные хранятся только в вашем браузере.</footer>
+<footer class="wrap">GlitchZone Community</footer>
 <div id="md"></div><div id="ts"></div>
 <script>
 const $=s=>document.querySelector(s),K='gz-v3',now=Date.now(),H=n=>now-n*36e5;
@@ -141,27 +143,56 @@ const ic=(n,s=18)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="no
 const KN={news:'Новость',article:'Статья',idea:'Идея',post:'Публикация',topic:'Тема',project:'Проект'};
 const FC=['Идеи','Баги','Игры','Помощь','Обсуждения','Другое'],PC=['Игры','Сайты','Боты','Приложения','Прочее'],ST=['Новое','Запланировано','В работе','Готово','Отклонено'];
 const HUE=[258,205,165,320,30,215],HN=['Фиолетовый','Синий','Бирюзовый','Розовый','Оранжевый','Графитовый'];
-const NAV=[['home','Главная'],['forum','Форум'],['feed','Лента'],['articles','Статьи'],['ideas','Идеи'],['projects','Проекты'],['news','Новости']];
-const CFG={forum:{k:'topic',n:'topic',cats:FC,st:1},feed:{n:'post',kinds:1},articles:{k:'article',n:'article'},ideas:{k:'idea',n:'idea',st:1},projects:{k:'project',n:'project',cats:PC},news:{k:'news',n:'news'},search:{}};
-const T={forum:'Форум',feed:'Лента',articles:'Статьи',ideas:'Идеи',projects:'Проекты',news:'Новости',search:'Результаты поиска'};
-let id=0;try{['gz-demo-v1','gz-demo-v2'].forEach(k=>localStorage.removeItem(k))}catch(e){}
-const seed=()=>({me:null,users:[],notifs:[],items:[]});
-let S;try{S=JSON.parse(localStorage.getItem(K))}catch(e){}
-if(!S||!S.items)S=seed();id=Math.max(0,...S.items.map(i=>i.id));
-const sv=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}};
+const NAV=[['home','Главная'],['forum','Форум'],['feed','Лента'],['articles','Статьи'],['ideas','Идеи'],['projects','Проекты']];
+const CFG={forum:{k:'topic',n:'topic',cats:FC},feed:{n:'post',kinds:1},articles:{k:'article',n:'article'},ideas:{k:'idea',n:'idea'},projects:{k:'project',n:'project',cats:PC},search:{}};
+const T={forum:'Форум',feed:'Лента',articles:'Статьи',ideas:'Идеи',projects:'Проекты',search:'Результаты поиска'};
+// ВАЖНО: для публикации сайта впишите сюда адрес проекта и ПУБЛИЧНЫЙ ключ (anon / publishable). Ключ service_role сюда нельзя.
+const SUPABASE_URL='https://zcttcytrjatiqrjcrnlf.supabase.co',SUPABASE_ANON_KEY='sb_publishable_9bsIZwWyKFAqvH6X6uCkCw_HprBzt94';
+let CF={url:SUPABASE_URL,key:SUPABASE_ANON_KEY};
+try{const c=JSON.parse(localStorage.getItem('gz-cfg')||'{}');CF={url:SUPABASE_URL||c.url||'',key:SUPABASE_ANON_KEY||c.key||''}}catch(e){}
+const sb=CF.url&&CF.key&&window.supabase?window.supabase.createClient(CF.url,CF.key,{auth:{flowType:'pkce',persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}):null;
+let S={me:null,uid:null,users:[],items:[],notifs:[]};const sv=()=>{};
+const TB={article:'posts',idea:'posts',post:'posts',topic:'forum_topics',project:'projects'},PCAT={article:'article',idea:'idea',post:'discussion'};
+const TCAT={'Идеи':'ideas','Баги':'bugs','Игры':'games','Помощь':'help','Обсуждения':'discussions','Другое':'other'},JCAT={'Игры':'games','Сайты':'sites','Боты':'bots','Приложения':'apps','Прочее':'other'};
+const rev=o=>Object.fromEntries(Object.entries(o).map(([a,b])=>[b,a])),TR=rev(TCAT),JR=rev(JCAT);
+const ck=r=>{if(r.error)throw r.error;return r.data};
+async function run(fn,ok){try{await fn();if(ok)toast(ok)}catch(e){toast((e&&e.message)||'Ошибка. Попробуйте ещё раз')}}
+async function load(){
+ const R=(await Promise.all(['profiles','posts','forum_topics','forum_replies','comments','likes','projects','notifications'].map(t=>sb.from(t).select('*').order('created_at')))).map(ck);
+ const [pr,po,tp,rp,cm,lk,pj,nt]=R,N={};
+ S.users=pr.map(p=>(N[p.id]=p.username,{n:p.username,id:p.id,role:'Участник',bio:p.bio||'',j:+new Date(p.created_at),img:p.avatar_url}));
+ const me=pr.find(p=>p.id==S.uid);S.me=me?me.username:null;
+ const grp=(rows,key)=>{const m={};rows.forEach(c=>(m[c[key]]=m[c[key]]||[]).push({id:c.id,a:N[c.author_id]||'Удалён',t:c.content,d:+new Date(c.created_at)}));return m};
+ const cp=grp(cm,'post_id'),cr=grp(rp,'topic_id'),lm={};lk.forEach(l=>(lm[l.post_id]=lm[l.post_id]||[]).push(N[l.user_id]));
+ const base=(r,k)=>({id:r.id,k,aid:r.author_id,a:N[r.author_id]||'Удалён',d:+new Date(r.created_at),ed:r.updated_at!=r.created_at?+new Date(r.updated_at):0,t:r.title,l:[],c:[]});
+ S.items=[...po.map(r=>({...base(r,r.category=='article'?'article':r.category=='idea'?'idea':'post'),b:r.content,l:lm[r.id]||[],c:cp[r.id]||[]})),
+  ...tp.map(r=>({...base(r,'topic'),b:r.content,cat:TR[r.category],c:cr[r.id]||[]})),
+  ...pj.map(r=>({...base(r,'project'),b:r.description,cat:JR[r.category],link:r.url||''}))];
+ S.notifs=nt.map(n=>{const i=S.items.find(x=>x.id==(n.post_id||n.topic_id)),a=N[n.actor_id]||'Кто-то',t=i?' «'+i.t.slice(0,40)+'»':'';
+  return{id:n.id,to:S.me,i:n.post_id||n.topic_id,d:+new Date(n.created_at),r:n.is_read,t:a+(n.type=='like'?' оценил(а)':n.type=='comment'?' прокомментировал(а)':' ответил(а) в теме')+t}}).sort((a,b)=>b.d-a.d)}
+const skel=()=>'<div class="bl">'+'<div class="sk"></div>'.repeat(5)+'</div>';
+async function init(){
+ $('#app').innerHTML=skel();
+ try{const {data:{session}}=await sb.auth.getSession();if(session){S.uid=session.user.id;await load()}}catch(e){toast('Не удалось загрузить данные: '+(e.message||e))}
+ sb.auth.onAuthStateChange((ev,ss)=>{setTimeout(async()=>{
+  if(ev=='PASSWORD_RECOVERY'&&ss){S.uid=ss.user.id;await run(load);draw();pwModal()}
+  else if(ev=='SIGNED_IN'&&ss&&S.uid!=ss.user.id){S.uid=ss.user.id;await run(load);draw()}
+  else if(ev=='SIGNED_OUT'){S.uid=null;S.me=null;S.items=[];S.notifs=[];draw()}},0)});
+ draw()}
+const setup=()=>`<div class="gate"><div class="box auth"><div class="logo" style="font-size:30px">GlitchZone</div><h1 style="font-size:20px;margin:12px 0 6px">Подключение Supabase</h1><p class="hint">Вставьте адрес проекта и публичный ключ (anon / publishable) из Supabase: Project Settings, затем API. Ключ service_role вставлять нельзя.</p><div class="fm"><label>Project URL<input id="s_u" placeholder="https://xxxx.supabase.co"></label><label>Публичный ключ<input id="s_k"></label><div class="hint er" id="s_e"></div><button class="btn" data-a="savecfg">Подключить</button><p class="hint">Это сохранит настройки только в вашем браузере. Чтобы сайт работал у всех посетителей, впишите те же значения в начало файла index.html (строка с SUPABASE_URL).</p></div></div></div>`;
 let page='home',F={cat:'',sort:'new',q:'',kind:'',st:''},view=null;
 const U=n=>S.users.find(u=>u.n==n)||{n,role:'Участник',bio:'',j:Date.now()};
 const dt=d=>new Date(d).toLocaleDateString('ru-RU',{day:'numeric',month:'short',year:'numeric'});
 const ago=d=>{const m=(Date.now()-d)/6e4;return m<2?'только что':m<60?Math.floor(m)+' мин назад':m<1440?Math.floor(m/60)+' ч назад':dt(d)};
-const av=(n,c='')=>{const u=U(n),h=HUE[u.col!=null?u.col:hs(n)%5];return u.img?`<span class="av ${c}"><img src="${esc(u.img)}" alt=""></span>`:`<span class="av ${c}" style="background:hsl(${h} ${u.col==5?'8%':'34%'} 38%)">${esc(n[0].toUpperCase())}</span>`};
+const av=(n,c='')=>{const u=U(n),h=HUE[u.col!=null?u.col:hs(n)%5];return u.img?`<span class="av ${c}"><img src="${esc(u.img)}" alt="" referrerpolicy="no-referrer"></span>`:`<span class="av ${c}" style="background:hsl(${h} ${u.col==5?'8%':'34%'} 38%)">${esc(n[0].toUpperCase())}</span>`};
 const au=n=>`<span class="au" data-a="user" data-v="${esc(n)}">${esc(n)}</span>`;
 const stt=i=>i.st?`<span class="st s${ST.indexOf(i.st)}">${esc(i.st)}</span>`:'';
 const dm=i=>i.demo?'<span class="demo">Пример</span>':'';
 const lm=i=>i.c.length?i.c[i.c.length-1]:{a:i.a,d:i.d};
 function toast(m){const e=document.createElement('div');e.className='toast';e.textContent=m;$('#ts').append(e);setTimeout(()=>e.remove(),2600)}
 function go(p){F={cat:'',sort:'new',q:'',kind:'',st:''};view=null;location.hash=p}
-const lkb=i=>{const o=S.me&&i.l.includes(S.me);return `<button class="lk ${o?'on':''}" data-a="like" data-v="${i.id}" aria-label="Нравится">${ic('heart',14)}${i.l.length}</button>`};
-const trow=i=>{const l=lm(i);return `<div class="tr" data-a="open" data-v="${i.id}">${av(i.a)}<div><div class="tt">${i.pin?ic('pin',14):''}<span>${esc(i.t)}</span></div><div class="tg"><span class="cat">${esc(i.cat||'')}</span>${stt(i)}<span>${au(i.a)}, ${ago(i.d)}</span>${dm(i)}</div></div><div class="tl"><span>${ic('msg',14)}${i.c.length}</span><span>${ic('heart',14)}${i.l.length}</span></div><div class="tx"><b>${esc(l.a)}</b><br>${ago(l.d)}</div></div>`};
+const lkb=i=>{if(!PCAT[i.k])return '';const o=S.me&&i.l.includes(S.me);return `<button class="lk ${o?'on':''}" data-a="like" data-v="${i.id}" aria-label="Нравится">${ic('heart',14)}${i.l.length}</button>`};
+const trow=i=>{const l=lm(i);return `<div class="tr" data-a="open" data-v="${i.id}">${av(i.a)}<div><div class="tt">${i.pin?ic('pin',14):''}<span>${esc(i.t)}</span></div><div class="tg"><span class="cat">${esc(i.cat||'')}</span>${stt(i)}<span>${au(i.a)}, ${ago(i.d)}</span>${dm(i)}</div></div><div class="tl"><span>${ic('msg',14)}${i.c.length}</span></div><div class="tx"><b>${esc(l.a)}</b><br>${ago(l.d)}</div></div>`};
 const irow=i=>`<div class="ir" data-a="open" data-v="${i.id}">${av(i.a)}<div><div class="tt">${esc(i.t)}</div><p class="ex">${esc(i.b)}</p><div class="tg"><span class="cat">${i.cat&&i.k!='topic'?esc(i.cat):KN[i.k]}</span>${stt(i)}<span>${au(i.a)}, ${ago(i.d)}</span>${lkb(i)}<span class="ct">${ic('msg',14)}${i.c.length}</span>${dm(i)}</div></div></div>`;
 const nrow=i=>`<div class="nr" data-a="open" data-v="${i.id}"><div class="nd">${new Date(i.d).toLocaleDateString('ru-RU',{day:'numeric',month:'short'})}</div><div><div class="tt">${esc(i.t)}</div>${i.demo?'<div class="tg">'+dm(i)+'</div>':''}</div></div>`;
 const prow=(i,f)=>`<div class="pr" data-a="open" data-v="${i.id}"><span class="av" style="background:hsl(${HUE[hs(i.t)%5]} 34% 38%)">${esc(i.t[0])}</span><div><div class="tt">${esc(i.t)}</div>${f?`<p class="ex">${esc(i.b)}</p>`:''}<div class="tg"><span class="cat">${esc(i.cat)}</span>${stt(i)}<span>${au(i.a)}</span>${lkb(i)}${dm(i)}</div></div></div>`;
@@ -170,7 +201,7 @@ const by=k=>S.items.filter(i=>i.k==k);
 function home(){const tp=by('topic').sort((a,b)=>lm(b).d-lm(a).d).slice(0,5),ps=S.items.filter(i=>i.k=='post'||i.k=='article').sort((a,b)=>b.d-a.d).slice(0,4);
 return `<section class="hero"><div><h1>GlitchZone</h1><p>Место, где рождаются цифровые идеи</p><div class="rw"><button class="btn" data-a="new" data-v="topic">${ic('plus',16)}Создать тему</button><button class="btn g" data-a="nav" data-v="forum">Исследовать сообщество</button></div></div></section>
 <div class="cols"><div>${blk('Последние обсуждения','forum',tp.map(trow).join(''),['Пока здесь тихо','Начни обсуждение: создай первую тему форума.','topic','Создать тему'])}${blk('Свежие публикации','feed',ps.map(irow).join(''),['Лента пуста','Опубликуй первую запись сообщества.','post','Опубликовать'])}</div>
-<aside>${blk('Новости','news',by('news').sort((a,b)=>b.d-a.d).slice(0,4).map(nrow).join(''),['Новостей пока нет','Здесь появятся объявления сообщества.','news','Добавить новость'])}${blk('Популярные проекты','projects',by('project').sort((a,b)=>b.l.length-a.l.length).slice(0,3).map(i=>prow(i)).join(''),['Проектов пока нет','Расскажи о своей игре, боте или сайте.','project','Добавить проект'])}
+<aside>${blk('Идеи','ideas',by('idea').sort((a,b)=>b.d-a.d).slice(0,4).map(nrow).join(''),['Идей пока нет','Опубликуй первую идею.','idea','Опубликовать идею'])}${blk('Популярные проекты','projects',by('project').sort((a,b)=>b.l.length-a.l.length).slice(0,3).map(i=>prow(i)).join(''),['Проектов пока нет','Расскажи о своей игре, боте или сайте.','project','Добавить проект'])}
 <div class="box"><b>О сообществе</b><p class="ex" style="-webkit-line-clamp:unset">Площадка для авторов игр, ботов и сайтов: форум, статьи, проекты и идеи в одном месте.</p></div></aside></div>`}
 function listPage(){const c=CFG[page],ch=(arr,key)=>`<div class="chips"><button class="chip ${F[key]?'':'on'}" data-a="f" data-k="${key}" data-v="">Все</button>`+arr.map(x=>{const v=key=='kind'?x[0]:x;return `<button class="chip ${F[key]==v?'on':''}" data-a="f" data-k="${key}" data-v="${esc(v)}">${esc(key=='kind'?x[1]:x)}</button>`}).join('')+'</div>';
 return `<div class="ph"><h1>${T[page]}</h1>${c.n?`<button class="btn" data-a="new" data-v="${c.n}">${ic('plus',16)}Создать</button>`:''}</div>${c.cats?ch(c.cats,'cat'):''}${c.kinds?ch(Object.entries(KN),'kind'):''}
@@ -191,20 +222,26 @@ const u=U(n),s=stat(n),own=n==S.me;
 return `<div class="box"><div class="rw" style="gap:16px">${av(n,'l')}<div><h1 style="margin:0;font-size:24px">${esc(n)}</h1><div class="tg"><span class="cat">${esc(u.role)}</span>${dm(u)}<span>на сайте с ${dt(u.j)}</span></div></div></div><p>${esc(u.bio||'Пока без описания.')}</p>
 <div class="stt"><span><b>${s.p}</b>публикаций</span><span><b>${s.c}</b>комментариев</span><span><b>${s.l}</b>лайков</span></div>${own?`<div class="rw"><button class="btn g" data-a="editp">${ic('edit',16)}Редактировать</button><button class="btn g" data-a="logout">${ic('out',16)}Выйти</button></div>`:''}</div>
 <div class="bh" style="margin-top:20px"><h2>Публикации</h2></div><div class="bl">${s.m.map(irow).join('')||'<div class="empty">Пока ничего нет.</div>'}</div>`}
-function auth(reg){return `<div class="gate"><div class="box auth"><div class="logo" style="font-size:30px;margin:0 0 2px">GlitchZone</div><p class="hint" style="margin:0 0 16px">Место, где рождаются цифровые идеи</p><div class="tabs"><button class="${reg?'on':''}" data-a="nav" data-v="register">Регистрация</button><button class="${reg?'':'on'}" data-a="nav" data-v="login">Вход</button></div><p class="hint">Содержимое сообщества доступно только после входа. Аккаунт хранится только в этом браузере: это не серверная авторизация.</p><div class="fm">
-<label>Никнейм<input id="a_n" autocomplete="username" maxlength="16"></label><div class="hint" id="h_n"></div>
+function auth(reg){return `<div class="gate"><div class="box auth"><div class="logo" style="font-size:30px;margin:0 0 2px">GlitchZone</div><p class="hint" style="margin:0 0 16px">Место, где рождаются цифровые идеи</p><div class="tabs"><button class="${reg?'on':''}" data-a="nav" data-v="register">Регистрация</button><button class="${reg?'':'on'}" data-a="nav" data-v="login">Вход</button></div><p class="hint">Содержимое сообщества доступно только после входа.</p><div class="fm">
+${reg?'<label>Никнейм<input id="a_n" autocomplete="username" maxlength="16"></label><div class="hint" id="h_n"></div>':''}
+<label>Почта<input id="a_e" type="email" autocomplete="email"></label>
 <label>Пароль<span class="pw"><input id="a_p" type="password" autocomplete="${reg?'new':'current'}-password"><button class="ib" style="border-color:var(--bd)" data-a="eye" type="button" aria-label="Показать пароль">${ic('eye')}</button></span></label>
-${reg?`<div class="pb"><i id="bar"></i></div><div class="hint" id="h_p">От 8 символов, строчные и заглавные буквы, цифра или символ.</div><label>Повтор пароля<input id="a_r" type="password" autocomplete="new-password"></label><div class="hint" id="h_r"></div>`:'<div class="hint er" id="h_e"></div>'}
-<button class="btn" style="justify-content:center" id="a_b" data-a="${reg?'reg':'login'}" ${reg?'disabled':''}>${reg?'Создать аккаунт':'Войти'}</button>
-</div></div></div></div>`}
+${reg?`<div class="pb"><i id="bar"></i></div><div class="hint" id="h_p">От 8 символов, строчные и заглавные буквы, цифра или символ.</div><label>Повтор пароля<input id="a_r" type="password" autocomplete="new-password"></label><div class="hint" id="h_r"></div>`:'<div class="hint er" id="h_e"></div><button class="more" style="justify-self:start" data-a="forgot">Забыли пароль?</button>'}
+<button class="btn" style="justify-content:center" id="a_b" data-a="${reg?'reg':'login'}" ${reg?'disabled':''}>${reg?'Создать аккаунт':'Войти'}</button></div></div></div>`}
 const PAGES={home,profile,register:()=>auth(1),login:()=>auth(0)};
 function sc(p){let s=0;if(p.length>=8)s++;if(/[a-zа-я]/.test(p)&&/[A-ZА-Я]/.test(p))s++;if(/\d/.test(p))s++;if(/[^\w\s]/.test(p))s++;return s}
-function chk(){const n=$('#a_n').value,p=$('#a_p').value,r=$('#a_r').value;let ok=1;
-const nm=/^[A-Za-z0-9_]{3,16}$/.test(n),tk=S.users.some(u=>u.n.toLowerCase()==n.toLowerCase());
-$('#h_n').innerHTML=!n?'':!nm?'<span class="er">3–16 символов: латиница, цифры, _</span>':tk?'<span class="er">Ник занят</span>':'<span class="okc">Ник свободен</span>';
-if(!nm||tk)ok=0;const s=sc(p),b=$('#bar');b.style.width=s*25+'%';b.style.background=['#ef6b6b','#ef6b6b','#e0a84a','#5aa8f0','#4ecb9a'][s];
+let an={n:'',ok:null},nt;
+async function chkNick(){const n=an.n;let ok=false;try{const {data}=await sb.rpc('is_username_available',{p_username:n});ok=!!data}catch(e){}if(an.n==n){an.ok=ok;if($('#a_n'))chk()}}
+function chk(){const n=$('#a_n').value,e=$('#a_e').value,p=$('#a_p').value,r=$('#a_r').value,hn=h=>$('#h_n').innerHTML=h;let ok=1;
+const nm=/^[A-Za-z0-9_]{3,16}$/.test(n);
+if(!n)hn('');else if(!nm)hn('<span class="er">3–16 символов: латиница, цифры, _</span>');
+else if(an.n!=n){an={n,ok:null};hn('Проверяем ник…');clearTimeout(nt);nt=setTimeout(chkNick,400)}
+else if(an.ok!==null)hn(an.ok?'<span class="okc">Ник свободен</span>':'<span class="er">Ник занят</span>');
+if(!nm||an.n!=n||an.ok!==true)ok=0;
+if(!/^\S+@\S+\.\S+$/.test(e))ok=0;
+const s=sc(p),b=$('#bar');b.style.width=s*25+'%';b.style.background=['#ef6b6b','#ef6b6b','#e0a84a','#5aa8f0','#4ecb9a'][s];
 if(p.length<8||s<3)ok=0;$('#h_r').innerHTML=!r?'':r==p?'<span class="okc">Пароли совпадают</span>':'<span class="er">Пароли не совпадают</span>';if(r!=p||!r)ok=0;$('#a_b').disabled=!ok}
-function draw(){page=location.hash.slice(1)||'home';if(!S.me&&page!='login')page='register';if(S.me&&(page=='login'||page=='register'))page='home';if(!PAGES[page]&&!CFG[page])page='home';
+function draw(){if(!sb){document.body.classList.add('out');$('#app').innerHTML=setup();return}page=location.hash.slice(1)||'home';if(!S.me&&page!='login')page='register';if(S.me&&(page=='login'||page=='register'))page='home';if(!PAGES[page]&&!CFG[page])page='home';
 $('#app').innerHTML=(PAGES[page]||listPage)();$('#nv').classList.remove('open');if(CFG[page])fill();
 $('#nv').innerHTML=NAV.map(x=>`<button class="${page==x[0]?'on':''}" data-a="nav" data-v="${x[0]}">${x[1]}</button>`).join('')+`<button class="mb" data-a="prof">${S.me?'Профиль: '+esc(S.me):'Войти'}</button>`;
 $('#i_s').innerHTML=ic('search');$('#i_m').innerHTML=ic('menu');
@@ -213,23 +250,25 @@ $('#ub').textContent=S.me?S.me:'Войти';const n=S.notifs.filter(x=>!x.r&&(x.
 document.body.classList.toggle('out',!S.me)}
 function modal(h){$('#md').innerHTML=`<div class="ov" data-a="close"><div class="md">${h}</div></div>`}
 const xb=`<button class="ib" data-a="close" aria-label="Закрыть">${ic('x')}</button>`;
-function detail(i){const own=S.me&&S.me==i.a,o=S.me&&i.l.includes(S.me);
+function detail0(i){const own=S.me&&S.me==i.a,o=S.me&&i.l.includes(S.me);
 return `<div class="mh"><div class="tg" style="margin:0"><span class="cat">${i.cat&&i.k!='topic'&&i.k!='project'?esc(i.cat):KN[i.k]}</span>${i.k=='topic'||i.k=='project'?`<span class="cat">${esc(i.cat)}</span>`:''}${stt(i)}</div>${xb}</div><h3>${esc(i.t)}</h3><div class="tg" style="margin:0 0 12px">${av(i.a,'s')}<span>${au(i.a)}, ${dt(i.d)}${i.ed?', изменено '+dt(i.ed):''}</span></div>
 <p style="white-space:pre-wrap;margin:0 0 12px">${esc(i.b)}</p>${/^https?:\/\//.test(i.link||'')?`<p><a href="${esc(i.link)}" target="_blank" rel="noopener noreferrer">${ic('link',14)} Ссылка на проект</a></p>`:''}
-<div class="rw"><button class="btn ${o?'':'g'}" data-a="like" data-v="${i.id}" data-m="1">${ic('heart',16)}${i.l.length}</button>${own?`<button class="btn g" data-a="edit" data-v="${i.id}">${ic('edit',16)}Изменить</button><button class="btn g" data-a="del" data-v="${i.id}">${ic('trash',16)}Удалить</button>`:''}</div>
+<div class="rw">${PCAT[i.k]?`<button class="btn ${o?'':'g'}" data-a="like" data-v="${i.id}" data-m="1">${ic('heart',16)}${i.l.length}</button>`:''}${own?`<button class="btn g" data-a="edit" data-v="${i.id}">${ic('edit',16)}Изменить</button><button class="btn g" data-a="del" data-v="${i.id}">${ic('trash',16)}Удалить</button>`:''}</div>
 <h2 class="t" style="margin:18px 0 4px">${i.k=='topic'?'Ответы':'Комментарии'} (${i.c.length})</h2>${i.c.map((c,x)=>`<div class="cm"><div class="tg" style="margin:0 0 3px;justify-content:space-between"><span class="rw" style="gap:6px">${av(c.a,'s')}<b style="color:var(--tx)">${esc(c.a)}</b>${ago(c.d)}</span>${S.me==c.a?`<button class="lk" data-a="cdel" data-v="${i.id}" data-x="${x}" aria-label="Удалить комментарий">${ic('trash',14)}</button>`:''}</div><div style="white-space:pre-wrap">${esc(c.t)}</div></div>`).join('')||'<div class="hint" style="padding:8px 0">Пока никто не ответил. Напиши первым.</div>'}
 <div class="fm" style="margin-top:10px"><textarea id="cmt" rows="2" maxlength="500" placeholder="${i.k=='topic'?'Твой ответ':'Твой комментарий'}"></textarea><button class="btn" style="justify-self:start" data-a="cmt" data-v="${i.id}">Отправить</button></div>`}
-const form=(k,i)=>{const cs=k=='topic'?FC:k=='project'?PC:null,ss=k=='topic'||k=='idea'?ST:k=='project'?['Идея','В разработке','Готов']:null,c=i?i.cat:(F.cat&&cs&&cs.includes(F.cat)?F.cat:'');
+const form=(k,i)=>{const cs=k=='topic'?FC:k=='project'?PC:null,ss=null,c=i?i.cat:(F.cat&&cs&&cs.includes(F.cat)?F.cat:'');
 return `<label>Заголовок<input id="f_t" maxlength="100" value="${i?esc(i.t):''}"></label><label>Текст<textarea id="f_b" rows="7" maxlength="3000">${i?esc(i.b):''}</textarea></label>${cs?`<label>Категория<select id="f_c">${cs.map(x=>`<option ${x==c?'selected':''}>${x}</option>`).join('')}</select></label>`:''}${i&&ss?`<label>Статус<select id="f_s">${ss.map(x=>`<option ${x==i.st?'selected':''}>${x}</option>`).join('')}</select></label>`:''}${k=='project'?`<label>Ссылка (https://…)<input id="f_l" value="${i?esc(i.link||''):''}"></label>`:''}<div class="hint er" id="f_e"></div>`};
 function rd(){const t=$('#f_t').value.trim(),b=$('#f_b').value.trim(),l=$('#f_l')?$('#f_l').value.trim():'';let e='';if(t.length<3)e='Заголовок: минимум 3 символа.';else if(b.length<3)e='Текст: минимум 3 символа.';else if(l&&!/^https?:\/\/\S+$/.test(l))e='Ссылка должна начинаться с http:// или https://';if(e){$('#f_e').textContent=e;return null}return{t,b,l}}
-async function pwh(sl,p){const x=sl+':'+p;try{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(x));return [...new Uint8Array(b)].map(v=>v.toString(16).padStart(2,'0')).join('')}catch(e){return 'h'+hs(x)}}
-const rnd=()=>{try{return [...crypto.getRandomValues(new Uint8Array(8))].map(v=>v.toString(16).padStart(2,'0')).join('')}catch(e){return String(Math.random()).slice(2)}};
-async function doReg(){const n=$('#a_n').value,b=$('#a_b');if(S.users.some(u=>u.n.toLowerCase()==n.toLowerCase()))return;b.disabled=true;b.textContent='Создаём аккаунт…';const sl=rnd(),pw=await pwh(sl,$('#a_p').value);S.users.push({n,role:'Участник',bio:'',col:hs(n)%5,j:Date.now(),s:sl,pw});S.me=n;sv();toast('Добро пожаловать, '+n);go('home');draw()}
-async function doLogin(){const n=$('#a_n').value.trim(),p=$('#a_p').value,b=$('#a_b'),u=S.users.find(u=>u.n.toLowerCase()==n.toLowerCase());b.disabled=true;b.textContent='Проверяем…';let ok=false;if(u){if(typeof u.pw=='number'){ok=u.pw==hs(p);if(ok){u.s=rnd();u.pw=await pwh(u.s,p)}}else ok=u.pw==await pwh(u.s||'',p)}
-if(ok){S.me=u.n;sv();toast('Вы вошли как '+u.n);go('home');draw()}else{b.disabled=false;b.textContent='Войти';$('#h_e').textContent='Неверный ник или пароль.';$('#a_p').value=''}}
-let pend;
-function avUpload(f){const file=f.files[0];if(!file)return;const h=$('#av_h');if(!/^image\/(png|jpeg|webp)$/.test(file.type)){h.textContent='Допустимы только PNG, JPG и WebP.';h.className='hint er';return}if(file.size>2*1048576){h.textContent='Файл больше 2 МБ.';h.className='hint er';return}
-h.textContent='Обработка…';h.className='hint';const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const c=document.createElement('canvas');c.width=c.height=128;const m=Math.min(im.width,im.height);c.getContext('2d').drawImage(im,(im.width-m)/2,(im.height-m)/2,m,m,0,0,128,128);pend=c.toDataURL('image/jpeg',.85);$('#av_pv').innerHTML=`<span class="av l"><img src="${pend}" alt=""></span>`;h.textContent='Фото выбрано. Нажмите «Сохранить».'};im.onerror=()=>{h.textContent='Не удалось прочитать изображение.';h.className='hint er'};im.src=r.result};r.readAsDataURL(file)}
+async function doReg(){const n=$('#a_n').value.trim(),e=$('#a_e').value.trim(),b=$('#a_b');b.disabled=true;b.textContent='Создаём аккаунт…';
+ const {data,error}=await sb.auth.signUp({email:e,password:$('#a_p').value,options:{data:{username:n},emailRedirectTo:location.href.split('#')[0].split('?')[0]}});
+ if(error){b.disabled=false;b.textContent='Создать аккаунт';$('#h_p').innerHTML='<span class="er">'+esc(/database|username/i.test(error.message)?'Не удалось создать профиль: возможно, ник уже занят.':error.message)+'</span>';return}
+ if(data.session){S.uid=data.user.id;await run(load);toast('Добро пожаловать, '+n);go('home');draw()}else{go('login');draw();toast('Проверьте почту: подтвердите адрес, затем войдите')}}
+async function doLogin(){const e=$('#a_e').value.trim(),b=$('#a_b');b.disabled=true;b.textContent='Входим…';
+ const {data,error}=await sb.auth.signInWithPassword({email:e,password:$('#a_p').value});
+ if(error){b.disabled=false;b.textContent='Войти';$('#h_e').textContent=/confirm/i.test(error.message)?'Подтвердите адрес почты по письму.':'Неверная почта или пароль.';$('#a_p').value='';return}
+ S.uid=data.user.id;await run(load);toast('Вы вошли как '+(S.me||e));go('home');draw()}
+function pwModal(){modal(`<div class="mh"><h3 style="margin:0">Новый пароль</h3></div><div class="fm" style="margin-top:12px"><label>Новый пароль<input id="n_p" type="password" autocomplete="new-password"></label><div class="hint">От 8 символов, строчные и заглавные буквы, цифра или символ.</div><div class="hint er" id="n_e"></div><button class="btn" data-a="setpw">Сохранить пароль</button></div>`)}
+function detail(i){return i.k=='project'?detail0(i).split('<h2 class="t"')[0]:detail0(i)}
 function need(){if(S.me)return 1;toast('Сначала войдите или зарегистрируйтесь');$('#md').innerHTML='';go('login');return 0}
 function notify(to,t,i){S.notifs.unshift({to,t,i,d:Date.now(),r:0})}
 document.addEventListener('click',e=>{const el=e.target.closest('[data-a]');if(!el)return;const a=el.dataset.a,v=el.dataset.v;
@@ -242,42 +281,51 @@ case'prof':go(S.me?'profile':'login');break;
 case'user':$('#md').innerHTML='';view=v;location.hash='profile';draw();break;
 case'f':F[el.dataset.k]=v;draw();break;
 case'open':modal(detail(find()));break;
-case'like':{e.stopPropagation();if(!need())break;const i=find(),x=i.l.indexOf(S.me);if(x<0){i.l.push(S.me);if(i.a!=S.me)notify(i.a,S.me+' оценил(а): «'+i.t.slice(0,40)+'»',i.id)}else i.l.splice(x,1);sv();draw();if(el.dataset.m)modal(detail(i));break}
-case'cmt':{if(!need())break;const i=find(),t=$('#cmt').value.trim();if(!t){toast('Напишите текст комментария');break}i.c.push({a:S.me,t,d:Date.now()});if(i.a!=S.me)notify(i.a,S.me+' ответил(а): «'+i.t.slice(0,40)+'»',i.id);sv();draw();modal(detail(i));break}
+case'like':{e.stopPropagation();if(!need())break;const i=find();if(!i||!PCAT[i.k])break;run(async()=>{if(i.l.includes(S.me))ck(await sb.from('likes').delete().eq('post_id',i.id).eq('user_id',S.uid));else ck(await sb.from('likes').insert({post_id:i.id}));await load();draw();if(el.dataset.m)modal(detail(find()))});break}
+case'cmt':{if(!need())break;const i=find(),t=$('#cmt').value.trim();if(!t){toast('Напишите текст');break}run(async()=>{ck(await(i.k=='topic'?sb.from('forum_replies').insert({topic_id:i.id,content:t}):sb.from('comments').insert({post_id:i.id,content:t})));await load();draw();modal(detail(find()))});break}
+case'cdel':{const i=find(),c=i&&i.c[+el.dataset.x];if(!c||c.a!=S.me)break;run(async()=>{ck(await sb.from(i.k=='topic'?'forum_replies':'comments').delete().eq('id',c.id));await load();draw();modal(detail(find()))});break}
 case'del':modal(`<h3>Удалить запись?</h3><p class="hint">Вместе с ней удалятся комментарии. Действие нельзя отменить.</p><div class="rw"><button class="btn" data-a="delok" data-v="${v}">Удалить</button><button class="btn g" data-a="close">Отмена</button></div>`);break;
-case'delok':{const i=find();if(i&&i.a==S.me){S.items=S.items.filter(x=>x.id!=i.id);S.notifs=S.notifs.filter(n=>n.i!=i.id);sv();$('#md').innerHTML='';draw();toast('Запись удалена')}break}
-case'cdel':{const i=find(),x=+el.dataset.x;if(i&&i.c[x]&&i.c[x].a==S.me){i.c.splice(x,1);sv();draw();modal(detail(i))}break}
+case'delok':{const i=find();if(!i||i.a!=S.me)break;run(async()=>{ck(await sb.from(TB[i.k]).delete().eq('id',i.id));await load();$('#md').innerHTML='';draw()},'Запись удалена');break}
 case'new':{if(!need())break;const k=v;modal(`<div class="mh"><h3 style="margin:0">Новая запись: ${KN[k].toLowerCase()}</h3>${xb}</div><div class="fm" style="margin-top:12px">${form(k)}<div class="rw"><button class="btn" data-a="save" data-v="${k}">Опубликовать</button><button class="btn g" data-a="close">Отмена</button></div></div>`);break}
-case'save':{const r=rd();if(!r)break;const x={};if($('#f_c'))x.cat=$('#f_c').value;if(v=='topic'||v=='idea')x.st='Новое';if(v=='project'){x.st='Идея';x.link=r.l}const i={id:++id,k:v,t:r.t,b:r.b,a:S.me,d:Date.now(),l:[],c:[],...x};S.items.push(i);sv();draw();modal(detail(i));toast('Опубликовано');break}
+case'save':{const r=rd();if(!r)break;const k=v,c=$('#f_c')?$('#f_c').value:'';run(async()=>{let row;
+ if(k=='topic')row=ck(await sb.from('forum_topics').insert({title:r.t,content:r.b,category:TCAT[c]}).select('id').single());
+ else if(k=='project')row=ck(await sb.from('projects').insert({title:r.t,description:r.b,category:JCAT[c],url:r.l||null}).select('id').single());
+ else row=ck(await sb.from('posts').insert({title:r.t,content:r.b,category:PCAT[k]}).select('id').single());
+ await load();draw();const n=S.items.find(x=>x.id==row.id);if(n)modal(detail(n));toast('Опубликовано')});break}
 case'edit':{const i=find();if(!i||i.a!=S.me)break;modal(`<div class="mh"><h3 style="margin:0">Редактирование</h3>${xb}</div><div class="fm" style="margin-top:12px">${form(i.k,i)}<div class="rw"><button class="btn" data-a="upd" data-v="${i.id}">Сохранить</button><button class="btn g" data-a="open" data-v="${i.id}">Отмена</button></div></div>`);break}
-case'upd':{const i=find();if(!i||i.a!=S.me)break;const r=rd();if(!r)break;i.t=r.t;i.b=r.b;if($('#f_c'))i.cat=$('#f_c').value;if($('#f_s'))i.st=$('#f_s').value;if(i.k=='project')i.link=r.l;i.ed=Date.now();sv();draw();modal(detail(i));toast('Изменения сохранены');break}
-case'bell':{const m=S.notifs.filter(n=>n.to==S.me);modal(`<div class="mh"><h3 style="margin:0">Уведомления</h3>${xb}</div>${m.map(n=>`<div class="cm" style="cursor:pointer;${n.r?'opacity:.55':''}" data-a="ntf" data-v="${n.i||0}" data-x="${n.d}">${esc(n.t)}<div class="hint">${ago(n.d)}</div></div>`).join('')||'<div class="empty"><b>Пока здесь тихо</b><p>Уведомления появятся, когда кто-то ответит или оценит твою запись.</p></div>'}${m.length?'<div class="rw" style="margin-top:10px"><button class="btn" data-a="readall">Прочитать все</button></div>':''}`);break}
-case'ntf':{const n=S.notifs.find(x=>x.d==el.dataset.x);if(n)n.r=1;sv();const i=find();draw();if(i)modal(detail(i));else $('#md').innerHTML='';break}
-case'readall':S.notifs.forEach(n=>{if(n.to==S.me||n.to=='*')n.r=1});sv();$('#md').innerHTML='';draw();break;
+case'upd':{const i=find();if(!i||i.a!=S.me)break;const r=rd();if(!r)break;const c=$('#f_c')?$('#f_c').value:'';run(async()=>{let u;
+ if(i.k=='topic')u={title:r.t,content:r.b,category:TCAT[c]};else if(i.k=='project')u={title:r.t,description:r.b,category:JCAT[c],url:r.l||null};else u={title:r.t,content:r.b};
+ ck(await sb.from(TB[i.k]).update(u).eq('id',i.id));await load();draw();modal(detail(find()))},'Изменения сохранены');break}
+case'bell':{modal(`<div class="mh"><h3 style="margin:0">Уведомления</h3>${xb}</div>${S.notifs.map(n=>`<div class="cm" style="cursor:pointer;${n.r?'opacity:.55':''}" data-a="ntf" data-v="${n.i||0}" data-x="${n.id}">${esc(n.t)}<div class="hint">${ago(n.d)}</div></div>`).join('')||'<div class="empty"><b>Пока здесь тихо</b><p>Уведомления появятся, когда кто-то ответит или оценит твою запись.</p></div>'}${S.notifs.length?'<div class="rw" style="margin-top:10px"><button class="btn" data-a="readall">Прочитать все</button></div>':''}`);break}
+case'ntf':{const n=S.notifs.find(x=>x.id==el.dataset.x);if(n&&!n.r){n.r=true;sb.from('notifications').update({is_read:true}).eq('id',n.id).then(()=>{})}const i=find();draw();if(i)modal(detail(i));else $('#md').innerHTML='';break}
+case'readall':run(async()=>{ck(await sb.from('notifications').update({is_read:true}).eq('user_id',S.uid).eq('is_read',false));S.notifs.forEach(n=>n.r=true);$('#md').innerHTML='';draw()});break;
 case'eye':{const p=$('#a_p');p.type=p.type=='password'?'text':'password';break}
 case'reg':doReg();break;
 case'login':doLogin();break;
-case'logout':S.me=null;sv();toast('Вы вышли');go('home');break;
-case'editp':{const u=U(S.me),c=u.col!=null?u.col:hs(S.me)%5;pend=undefined;modal(`<div class="mh"><h3 style="margin:0">Редактировать профиль</h3>${xb}</div><div class="fm" style="margin-top:12px"><div class="rw" style="gap:14px"><span id="av_pv">${av(S.me,'l')}</span><div class="rw"><button class="btn g" data-a="avpick">Загрузить фото</button>${u.img?'<button class="btn g" data-a="avrm">Убрать фото</button>':''}</div></div><input id="av_f" type="file" accept="image/png,image/jpeg,image/webp" hidden><div class="hint" id="av_h">PNG, JPG или WebP до 2 МБ.</div>
-<label>Никнейм<input id="e_n" maxlength="16" value="${esc(S.me)}"></label><label>Цвет аватара (если нет фото)<select id="e_a">${HN.map((x,j)=>`<option value="${j}" ${j==c?'selected':''}>${x}</option>`).join('')}</select></label><label>О себе (до 160 символов)<textarea id="e_b" rows="3" maxlength="160">${esc(u.bio)}</textarea></label><div class="hint er" id="e_e"></div><div class="rw"><button class="btn" data-a="savep">Сохранить</button><button class="btn g" data-a="close">Отмена</button></div></div>`);break}
-case'avpick':$('#av_f').click();break;
-case'avrm':pend=null;$('#av_pv').innerHTML='<span class="av l" style="background:var(--sf2)"></span>';$('#av_h').textContent='Фото будет удалено после сохранения.';break;
-case'savep':{const u=U(S.me),n=$('#e_n').value.trim(),e=$('#e_e'),o=S.me;
+case'forgot':modal(`<div class="mh"><h3 style="margin:0">Сброс пароля</h3>${xb}</div><div class="fm" style="margin-top:12px"><label>Почта<input id="r_e" type="email"></label><div class="hint er" id="r_h"></div><button class="btn" data-a="sendreset">Отправить письмо</button></div>`);break;
+case'sendreset':{const m=$('#r_e').value.trim();if(!/^\S+@\S+\.\S+$/.test(m)){$('#r_h').textContent='Введите корректную почту';break}run(async()=>{await sb.auth.resetPasswordForEmail(m,{redirectTo:location.href.split('#')[0].split('?')[0]});$('#md').innerHTML='';toast('Если такой адрес зарегистрирован, письмо отправлено')});break}
+case'setpw':{const p=$('#n_p').value;if(p.length<8||sc(p)<3){$('#n_e').textContent='Пароль слишком простой';break}run(async()=>{const {error}=await sb.auth.updateUser({password:p});if(error){$('#n_e').textContent=error.message;return}$('#md').innerHTML='';toast('Пароль изменён')});break}
+case'logout':run(async()=>{await sb.auth.signOut();S.uid=null;S.me=null;S.items=[];S.notifs=[];toast('Вы вышли');go('home');draw()});break;
+case'editp':{const u=U(S.me);modal(`<div class="mh"><h3 style="margin:0">Редактировать профиль</h3>${xb}</div><div class="fm" style="margin-top:12px"><div class="rw" style="gap:14px">${av(S.me,'l')}<div class="hint" style="flex:1;min-width:160px">Аватар задаётся ссылкой. Загрузка файлов появится после настройки Supabase Storage.</div></div><label>Ссылка на аватар (https://…)<input id="e_u" maxlength="500" value="${esc(u.img||'')}"></label><label>Никнейм<input id="e_n" maxlength="16" value="${esc(S.me)}"></label><label>О себе (до 160 символов)<textarea id="e_b" rows="3" maxlength="160">${esc(u.bio)}</textarea></label><div class="hint er" id="e_e"></div><div class="rw"><button class="btn" data-a="savep">Сохранить</button><button class="btn g" data-a="close">Отмена</button></div></div>`);break}
+case'savep':{const n=$('#e_n').value.trim(),e=$('#e_e'),url=$('#e_u').value.trim();
 if(!/^[A-Za-z0-9_]{3,16}$/.test(n)){e.textContent='Ник: 3–16 символов, латиница, цифры и _';break}
-if(n.toLowerCase()!=o.toLowerCase()&&S.users.some(x=>x.n.toLowerCase()==n.toLowerCase())){e.textContent='Этот ник уже занят';break}
-u.col=+$('#e_a').value;u.bio=$('#e_b').value.trim();if(pend!==undefined){if(pend)u.img=pend;else delete u.img}pend=undefined;
-if(n!=o){u.n=n;S.items.forEach(i=>{if(i.a==o)i.a=n;i.l=i.l.map(x=>x==o?n:x);i.c.forEach(c=>{if(c.a==o)c.a=n})});S.notifs.forEach(x=>{if(x.to==o)x.to=n});S.me=n;if(view==o)view=n}
-sv();$('#md').innerHTML='';draw();toast('Профиль сохранён');break}
+if(url&&!/^https:\/\/\S+$/.test(url)){e.textContent='Ссылка на аватар должна начинаться с https://';break}
+run(async()=>{const {error}=await sb.from('profiles').update({username:n,bio:$('#e_b').value.trim(),avatar_url:url||null}).eq('id',S.uid);if(error){e.textContent=error.code=='23505'?'Этот ник уже занят':error.message;return}await load();$('#md').innerHTML='';draw();toast('Профиль сохранён')});break}
+case'savecfg':{const u=$('#s_u').value.trim(),k=$('#s_k').value.trim(),e=$('#s_e');let bad=/^sb_secret_/.test(k);try{if(k.startsWith('eyJ'))bad=JSON.parse(atob(k.split('.')[1].replace(/-/g,'+').replace(/_/g,'/'))).role=='service_role'}catch(x){}
+if(!/^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/.test(u)){e.textContent='Адрес должен выглядеть как https://xxxx.supabase.co';break}
+if(bad){e.textContent='Это секретный ключ. Нужен публичный (anon / publishable).';break}
+if(k.length<20){e.textContent='Вставьте ключ целиком';break}
+try{localStorage.setItem('gz-cfg',JSON.stringify({url:u.replace(/\/$/,''),key:k}))}catch(x){}location.reload();break}
 }});
 document.addEventListener('input',e=>{const t=e.target;
 if(t.id=='gs'){F.q=t.value;if(page!='search'){F.sort='new';location.hash='search'}else fill()}
 else if(t.id=='lq'){F.q=t.value;fill()}
-else if(['a_n','a_p','a_r'].includes(t.id)&&$('#bar'))chk()});
-document.addEventListener('change',e=>{if(e.target.id=='av_f'){avUpload(e.target);return}const a=e.target.dataset.a;if(a=='sort'){F.sort=e.target.value;fill()}if(a=='st'){F.st=e.target.value;fill()}});
+else if(['a_n','a_e','a_p','a_r'].includes(t.id)&&$('#bar'))chk()});
+document.addEventListener('change',e=>{const a=e.target.dataset.a;if(a=='sort'){F.sort=e.target.value;fill()}if(a=='st'){F.st=e.target.value;fill()}});
 document.addEventListener('keydown',e=>{if(e.key=='Escape'){$('#md').innerHTML='';$('#sr').hidden=true}});
-document.addEventListener('keydown',e=>{if(e.key=='Enter'&&['a_n','a_p','a_r'].includes(e.target.id)){const b=$('#a_b');if(b&&!b.disabled)b.click()}});
+document.addEventListener('keydown',e=>{if(e.key=='Enter'&&['a_n','a_e','a_p','a_r'].includes(e.target.id)){const b=$('#a_b');if(b&&!b.disabled)b.click()}});
 addEventListener('hashchange',()=>{draw();scrollTo(0,0)});
-draw();
+if(sb)init();else draw();
 </script>
 </body>
 </html>
